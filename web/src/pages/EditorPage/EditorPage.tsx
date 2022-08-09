@@ -1,14 +1,19 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useContext, useState } from 'react'
 
 import { faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Listbox, Tab, Transition } from '@headlessui/react'
+import DraggableList from 'react-draggable-list'
 
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
 
-import InputField from 'src/components/InputField/InputField'
+import InputField, {
+  InputFieldData,
+} from 'src/components/InputField/InputField'
 import PasswordField from 'src/components/PasswordField/PasswordField'
+import SignupPreview from 'src/components/SignupPreview/SignupPreview'
+import { AppContext } from 'src/context/AppContext'
 
 const previewStatus = [{ name: 'build' }, { name: 'preview' }]
 
@@ -19,8 +24,18 @@ const EditorPage = () => {
     { title: 'Checkout' },
     { title: 'Subscriptions' },
   ])
-
+  const [fields, setFields] = useState<ReadonlyArray<InputFieldData>>([
+    { name: 'First Name', content: 'Hello' },
+    { name: 'Last Name', content: '' },
+  ])
   const [selected, setSelected] = useState(previewStatus[0])
+  const [useContainer] = useState(false)
+  const { signUp, setSignUp } = useContext(AppContext)
+
+  const _onListChange = (newList: ReadonlyArray<InputFieldData>) => {
+    setSignUp(newList)
+  }
+
   return (
     <div className="flex h-full w-full flex-col">
       <Tab.Group>
@@ -118,40 +133,50 @@ const EditorPage = () => {
                   <div className="p-5">
                     <h1 className="text-xl font-semibold">Fields</h1>
                     <div className="my-4">
-                      <InputField />
-                      <InputField />
+                      <DraggableList
+                        itemKey={'name'}
+                        list={signUp}
+                        template={InputField}
+                        onMoveEnd={(newList) => _onListChange(newList)}
+                        container={() => document.body}
+                      />
                     </div>
                   </div>
                 </Tab.Panel>
                 <Tab.Panel className="flex h-full">
-                  <div className="m-auto w-96 rounded-xl bg-white p-5 shadow">
-                    <form className="flex flex-col gap-2">
-                      <h3 className="text-3xl font-semibold">Signup</h3>
-                      <p>We're super excited for you to join the community!</p>
-                      <div className="flex flex-col">
-                        <label htmlFor="email">
-                          Email <span className="text-red-600">*</span>
-                        </label>
-                        <input
-                          name="email"
-                          placeholder="example@mail.com"
-                          className="rounded-lg border-2 border-gray-200 px-2 py-2"
-                        />
-                      </div>
-                      <div className="flex flex-col">
-                        <label htmlFor="password">
-                          Password <span className="text-red-600">*</span>
-                        </label>
-                        <PasswordField />
-                      </div>
-                      <button
-                        className="rounded-lg bg-blue-500 py-1 text-white"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </form>
-                  </div>
+                  <>
+                    <div className="m-auto w-96 rounded-xl bg-white p-5 shadow">
+                      <form className="flex flex-col gap-2">
+                        <h3 className="text-3xl font-semibold">Signup</h3>
+                        <p>
+                          We're super excited for you to join the community!
+                        </p>
+                        <div className="flex flex-col">
+                          <label htmlFor="email">
+                            Email <span className="text-red-600">*</span>
+                          </label>
+                          <input
+                            name="email"
+                            placeholder="example@mail.com"
+                            className="rounded-lg border-2 border-gray-200 px-2 py-2"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label htmlFor="password">
+                            Password <span className="text-red-600">*</span>
+                          </label>
+                          <PasswordField />
+                        </div>
+                        <button
+                          className="rounded-lg bg-blue-500 py-1 text-white"
+                          type="submit"
+                        >
+                          Submit
+                        </button>
+                      </form>
+                    </div>
+                    <SignupPreview />
+                  </>
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>
