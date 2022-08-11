@@ -19,21 +19,19 @@ const previewStatus = [{ name: 'build' }, { name: 'preview' }]
 
 const EditorPage = () => {
   const [categories] = useState([
-    { title: 'Signup' },
+    { title: 'Sign up' },
     { title: 'Login' },
     { title: 'Checkout' },
     { title: 'Subscriptions' },
   ])
-  const [fields, setFields] = useState<ReadonlyArray<InputFieldData>>([
-    { name: 'First Name', content: 'Hello' },
-    { name: 'Last Name', content: '' },
-  ])
   const [selected, setSelected] = useState(previewStatus[0])
   const [useContainer] = useState(false)
   const { signUp, setSignUp } = useContext(AppContext)
+  const [signUpState, setSignUpState] = useState(signUp)
 
   const _onListChange = (newList: ReadonlyArray<InputFieldData>) => {
     setSignUp(newList)
+    setSignUpState(newList)
   }
 
   return (
@@ -134,49 +132,31 @@ const EditorPage = () => {
                     <h1 className="text-xl font-semibold">Fields</h1>
                     <div className="my-4">
                       <DraggableList
-                        itemKey={'name'}
-                        list={signUp}
+                        itemKey={'_id'}
+                        list={signUpState}
                         template={InputField}
                         onMoveEnd={(newList) => _onListChange(newList)}
                         container={() => document.body}
                       />
                     </div>
+                    <button
+                      className="rounded-lg bg-gradient-to-r from-fuchsia-400 to-indigo-400 py-2 px-4 font-semibold text-white hover:bg-opacity-60"
+                      onClick={() => {
+                        const newSignUp = signUp.concat({
+                          name: 'title',
+                          _id: Date.now().toString(),
+                          content: '',
+                        })
+                        setSignUp(newSignUp)
+                        setSignUpState(newSignUp)
+                      }}
+                    >
+                      Add Field
+                    </button>
                   </div>
                 </Tab.Panel>
-                <Tab.Panel className="flex h-full">
-                  <>
-                    <div className="m-auto w-96 rounded-xl bg-white p-5 shadow">
-                      <form className="flex flex-col gap-2">
-                        <h3 className="text-3xl font-semibold">Signup</h3>
-                        <p>
-                          We're super excited for you to join the community!
-                        </p>
-                        <div className="flex flex-col">
-                          <label htmlFor="email">
-                            Email <span className="text-red-600">*</span>
-                          </label>
-                          <input
-                            name="email"
-                            placeholder="example@mail.com"
-                            className="rounded-lg border-2 border-gray-200 px-2 py-2"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <label htmlFor="password">
-                            Password <span className="text-red-600">*</span>
-                          </label>
-                          <PasswordField />
-                        </div>
-                        <button
-                          className="rounded-lg bg-blue-500 py-1 text-white"
-                          type="submit"
-                        >
-                          Submit
-                        </button>
-                      </form>
-                    </div>
-                    <SignupPreview />
-                  </>
+                <Tab.Panel className="flex h-full items-center justify-center">
+                  <SignupPreview />
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>

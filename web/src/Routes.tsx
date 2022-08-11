@@ -15,7 +15,7 @@ import SidebarLayout from './layouts/SidebarLayout/SidebarLayout'
 const Routes = () => {
   return (
     <Router>
-      <Route path="/home" page={HomePage} name="home" />
+      <Route path="/" page={HomePage} name="home" />
       <Set wrap={EditorLayout}>
         <Route path="/payment" page={PaymentPage} name="payment" />
         <Route path="/editor" page={EditorPage} name="editor" />

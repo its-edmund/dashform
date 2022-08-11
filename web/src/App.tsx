@@ -12,8 +12,18 @@ import './index.css'
 
 const App = () => {
   const [signUp, setSignUp] = useState([
-    { name: 'First Name', content: '', _id: '123' },
-    { name: 'Last Name', content: '', _id: '456' },
+    {
+      name: 'First Name',
+      content: '',
+      _id: '123',
+      componentType: { name: 'Text' },
+    },
+    {
+      name: 'Last Name',
+      content: '',
+      _id: '456',
+      componentType: { name: 'Text' },
+    },
   ])
   const value = { signUp, setSignUp }
   return (
